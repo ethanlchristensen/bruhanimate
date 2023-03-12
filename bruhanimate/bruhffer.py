@@ -25,6 +25,11 @@ class Buffer:
         line = [u" " for _ in range(self._width)]
         self.buffer = [line[:] for _ in range(self._height)]
     
+    def copy(self):
+        tmp = Buffer(self._height, self._width)
+        tmp.buffer = [line[:] for line in self.buffer]
+        return tmp
+
     def get_buffer_changes(self, in_buf):
         """
         Return all the differences between this buffer

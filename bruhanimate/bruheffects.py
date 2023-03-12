@@ -567,17 +567,18 @@ class MatrixEffect(BaseEffect):
                 if self.buffer.get_char(_, 0) != " ":
                     # IF THERE IS A CHAR BELOW US THEN RANDOMLY DECIDE TO CONTINUE THE CHAIN
                     if random.random() < 0.5:
-                        row.append(_NOISE[random.randint(0, len(_NOISE) - 1)])
+                        row.append(bruhcolored(_NOISE[random.randint(0, len(_NOISE) - 1)], color=34).colored)
                     else:
                         row.append(" ")
                 else:
                     if random.random() < 0.01:
-                        row.append(_NOISE[random.randint(0, len(_NOISE) - 1)])
+                        row.append(bruhcolored(_NOISE[random.randint(0, len(_NOISE) - 1)], color=34).colored)
                     else:
                         row.append(" ")
             self.buffer.scroll(-1)
             if len(row) > 0:
-                self.buffer.put_at(0, 0, "".join(row))
+                for c in range(len(row)):
+                    self.buffer.put_char(c, 0, row[c])
 
 
 class _LINE:

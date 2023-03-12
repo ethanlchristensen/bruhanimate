@@ -19,8 +19,10 @@ import random
 from bruhanimate.bruhffer import Buffer
 from bruhanimate.bruheffects import *
 from bruhcolor import bruhcolored
+from bruhanimate.bruhframe import frame
 from abc import abstractmethod
 _VALID_EFFECTS = ["static", "offset", "noise", "stars", "plasma", "gol", "rain", "matrix", "drawlines"]
+_VALID_RENDERERS = ["effect", "center", "pan", "focus", "background"]
 HORIZONTAL = "h"
 VERTICAL   = "v"
 
@@ -110,7 +112,7 @@ class BaseRenderer:
         :param p2: end   point (x, y)
         """
         self.effect.line.uppdate_points(p1, p2)
-
+ 
     def push_front_to_screen(self):
         """
         Pushes changes between the back_buffer and front_buffer and applies them
@@ -118,7 +120,12 @@ class BaseRenderer:
         """
         for y, x, val in self.front_buffer.get_buffer_changes(self.back_buffer):
             self.screen.print_at(val, x, y, 1)
-    
+
+    def push_changes_to_screen_and_sync_to_front(self, in_buf):
+        for y, x, val in self.front_buffer.get_buffer_changes(in_buf):
+            self.screen.print_at(val, x, y, 1)
+            self.front_buffer.put_char(x, y, val)
+
     def render_exit(self):
         """
         Renders out the exit prompt to the screen.
@@ -150,6 +157,21 @@ class BaseRenderer:
         if end_message:
             self.render_exit()
             self.push_front_to_screen()
+
+    def pre_run(self, img=False):
+        frames = []
+        for _ in range(self.frames):
+            if img:
+                self.render_img_frame(_)
+            self.effect.render_frame(_)
+            self.back_buffer.sync_with(self.effect.buffer)
+            if img:
+                self.back_buffer.sync_over_top_img(self.image_buffer)
+            frames.append(frame(self.back_buffer.copy()))
+        
+        self.render_exit()
+        frames.append(frame(self.back_buffer.copy()))
+        return frames
 
     def update_exit_stats(self, msg1=None, msg2=None, wipe=None, x_loc=0, y_loc=1, centered=False):
         """
@@ -536,5 +558,28 @@ class BackgroundColorRenderer(BaseRenderer):
             for x in range(self.width):
                 if (y >= self.img_y_start) and (y < (self.img_y_start + self.img_height)) and (x >= self.img_x_start) and (x < (self.img_x_start + self.img_width)):
                     self.image_buffer.put_char(x, y, bruhcolored(self.img[y - self.img_y_start][x - self.img_x_start], on_color=self.on_color_code).colored)
+
+
+class PreRenderer(BaseRenderer):
+    def __init__(self, screen, frames, time, img, effect_type="static", background=" ", transparent=False, renderer_type="effect"):
+        super(PreRenderer, self).__init__(screen, frames, time, effect_type, background, transparent)
+
+        self.renderer_type = renderer_type if renderer_type in _VALID_RENDERERS else "effect"
+
+        if self.renderer_type == "effect":
+            pass
+        elif self.renderer_type == "center":
+            self.renderer = CenterRenderer(screen, frames, time, img, effect_type, background, transparent)
+        
+
+    def run(self):
+        self.screen.prin_at("Rendering Animation . . . ", 1, 1, len("Rendering Animation . . . "))
+
+
+        frames = self.renderer.pre_run(True)
+
+        for i, frame in enumerate(frames):
+            sleep(self.time)
+            self.push_changes_to_screen_and_sync_to_front(frame.buffer)
 
 

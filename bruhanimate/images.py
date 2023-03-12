@@ -26,12 +26,15 @@ HEY = [f"    __  __          ", f"   / / / /__  __  __", f"  / /_/ / _ \/ / / /"
        f" / __  /  __/ /_/ / ", f"/_/ /_/\___/\__, /  ", f"           /____/   "]
 TWOPOINT = [r"                                                                               ",      r"   ____________ _   _ _   _  _____ _   _  _____ _      _       _____  _____    ", r"   | ___ \ ___ \ | | | | | |/  ___| | | ||  ___| |    | |     / __  \|  _  |   ", r"   | |_/ / |_/ / | | | |_| |\ `--.| |_| || |__ | |    | |     `' / /'| |/' |   ",
             r"   | ___ \    /| | | |  _  | `--. \  _  ||  __|| |    | |       / /  |  /| |   ", r"   | |_/ / |\ \| |_| | | | |/\__/ / | | || |___| |____| |____ ./ /___\ |_/ /   ", r"   \____/\_| \_|\___/\_| |_/\____/\_| |_/\____/\_____/\_____/ \_____(_)___/    ", r"                                                                               "]
+TRASH = [r"                                              ",r"  #include <stdlib.h>                         ",r"  #include <stdio.h>                          ",r"                                              ",r"  int main() {                                ",r'    printf("I Like Nutz in my mouth!\n");  ',r"    return 0;                                 ",r"  }                                           ",r"                                              ",]
+
 _REGISTERED_IMAGES = {
     "BRUH": BRUH,
     "BRUH_EMPTY": BRUH_EMPTY,
     "COMPUTER": COMPUTER,
     "HEY": HEY,
-    "TWOPOINT": TWOPOINT
+    "TWOPOINT": TWOPOINT,
+    "TRASH": TRASH,
 }
 
 
